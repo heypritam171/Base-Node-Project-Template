@@ -1,6 +1,8 @@
+const { statusCodes, StatusCodes } = require('http-status-codes');
 const { Model, where } = require("sequelize");
 // const { Logger } = require("../config/logger-config");
 const logger = require('../config/logger-config');
+const AppError = require("../utils/errors/app-errors");
 
 
 class CrudRepository {
@@ -10,39 +12,43 @@ class CrudRepository {
     }
 
     async create(data) {
-        const responce = this.model.create(data);
-        return responce;
+        const response = this.model.create(data);
+        return response;
 
     }
 
     async destroy(data) {
-        const responce = this.model.destroy({
+        const response = this.model.destroy({
             where: {
                 id: data
             }
         });
-        return responce;
+        return response;
 
     }
 
     async get(data) {
-        const responce = this.model.findByPk(data);
-        return responce;
+        const response = await this.model.findByPk(data);
+        if(!response){
+            throw new AppError("Not able to find resource",StatusCodes.NOT_FOUND );
+        }
+        return response;
 
     }
+
     async getAll() {
-        const responce = this.model.findAll();
-        return responce;
+        const response = this.model.findAll();
+        return response;
 
     }
     async update(id, data) {
 
-        const responce = this.model.update(data, { // data --> {col: vlaue....}
+        const response = this.model.update(data, { // data --> {col: vlaue....}
             where: {
                 id: id
             }
         });
-        return responce;
+        return response;
 
     }
 
