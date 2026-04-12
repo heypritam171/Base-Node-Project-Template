@@ -30,17 +30,17 @@ async function createAirplane(data) {
 
 }
 
-async function getAirplanes(){
+async function getAirplanes() {
     try {
         const airplane = await airplaneRepositories.getAll();
         return airplane;
     } catch (error) {
-                throw new AppError("Cannot fetch data of the airplanes", StatusCodes.INTERNAL_SERVER_ERROR);
+        throw new AppError("Cannot fetch data of the airplanes", StatusCodes.INTERNAL_SERVER_ERROR);
 
     }
 }
 
-async function getAirplane(id){
+async function getAirplane(id) {
 
 
     try {
@@ -50,12 +50,26 @@ async function getAirplane(id){
         if (error.StatusCode == StatusCodes.NOT_FOUND) {
             throw new AppError("The airplane you requested is not present", error.StatusCode);
         }
-         throw new AppError("Cannot fetch data of the airplanes", StatusCodes.INTERNAL_SERVER_ERROR);
+        throw new AppError("Cannot fetch data of the airplanes", StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+async function destroyAirplane(id) {
+    try {
+        const airplane = await airplaneRepositories.destroy(id);
+        return airplane;
+    } catch (error) {
+
+        if (error.StatusCode == StatusCodes.NOT_FOUND) {
+            throw new AppError("The airplane you request to delete is bot present", error.StatusCode);
+        }
+        throw new AppError("Cannot fetch data of the airplane", StatusCodes.INTERNAL_SERVER_ERROR);
     }
 }
 
 module.exports = {
     createAirplane,
     getAirplanes,
-    getAirplane
+    getAirplane,
+    destroyAirplane
 }
