@@ -49,9 +49,9 @@ async function updateCity(req, res) {
             .status(StatusCodes.OK)
             .json({ SuccessResponse });
     } catch (error) {
-        console.log("controller error => ",error);
-        
-        ErrorRespose.error =  error.explanation || error.message;;
+        console.log("controller error => ", error);
+
+        ErrorRespose.error = error.explanation || error.message;;
 
         return res
             .status(error.StatusCode || StatusCodes.INTERNAL_SERVER_ERROR)
