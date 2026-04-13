@@ -7,7 +7,7 @@ async function createCity(req, res) {
     try {
         const city = await CityService.createCity({
             name: req.body.name
-        })
+        });
 
         SuccessResponse.data = city;
 
@@ -15,10 +15,11 @@ async function createCity(req, res) {
             .status(StatusCodes.CREATED)
             .json({ SuccessResponse });
     } catch (error) {
+        console.log("controller error =>", error);
         ErrorRespose.error = error;
-        
+
         return res
-            .status(error.StatusCode)
+            .status(error.StatusCode || StatusCodes.INTERNAL_SERVER_ERROR)
             .json({ ErrorRespose });
     }
 }
