@@ -1,7 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const { CityRepositories } = require("../repositories");
 const AppError = require("../utils/errors/app-errors");
-const { SuccessResponse } = require("../utils/common");
+const { SuccessResponse, ErrorRespose } = require("../utils/common");
 
 const cityRepositories = new CityRepositories();
 
@@ -11,8 +11,7 @@ async function createCity(data) {
         const city = await cityRepositories.create(data);
         return city;
     } catch (error) {
-        console.log(error.name);
-        console.log(error.message);
+
         if (error.name == "SequelizeValidationError" || error.name == "SequelizeUniqueConstraintError") {
             let explanetion = [];
             error.errors.forEach((err) => {
@@ -35,6 +34,19 @@ async function createCity(data) {
 //     }
 // }
 
+async function destroyCity(id) {
+    try {
+        const city = await cityRepositories.destroy(id);
+        return city;
+    } catch (error) {
+        if (error.StatusCode == StatusCodes.NOT_FOUND) {
+            throw new AppError("The city you requested to delete is not present", error.StatusCode);
+        }
+        throw new AppError("Cannot fetch data of the city", StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
 module.exports = {
-    createCity
+    createCity,
+    destroyCity
 }

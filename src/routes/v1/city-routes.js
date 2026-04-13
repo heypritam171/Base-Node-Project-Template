@@ -6,4 +6,6 @@ const { CityMiddlewares } = require("../../middlewares")
 
 router.post('/',CityMiddlewares.validatecreateRequest, CityController.createCity);
 
+router.delete('/:id',CityController.deleteCity);
+
 module.exports = router;

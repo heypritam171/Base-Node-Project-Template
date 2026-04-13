@@ -15,7 +15,6 @@ async function createCity(req, res) {
             .status(StatusCodes.CREATED)
             .json({ SuccessResponse });
     } catch (error) {
-        console.log("controller error =>", error);
         ErrorRespose.error = error;
 
         return res
@@ -24,6 +23,23 @@ async function createCity(req, res) {
     }
 }
 
+async function deleteCity(req, res) {
+    try {
+        const city = await CityService.destroyCity(req.params.id);
+        SuccessResponse.data = city;
+
+        return res
+            .status(StatusCodes.OK)
+            .json({ SuccessResponse });
+    } catch (error) {
+        ErrorRespose.error = error;
+
+        return res.status(error.StatusCode)
+            .json({ ErrorRespose });
+    }
+}
+
 module.exports = {
-createCity
+    createCity,
+    deleteCity
 }
