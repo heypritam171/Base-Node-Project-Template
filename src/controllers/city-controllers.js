@@ -1,6 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 const { CityService } = require('../services');
 const { SuccessResponse, ErrorRespose } = require("../utils/common");
+const { error } = require('../utils/common/error-response');
 
 
 async function createCity(req, res) {
@@ -39,7 +40,27 @@ async function deleteCity(req, res) {
     }
 }
 
+async function updateCity(req, res) {
+    try {
+        const city = await CityService.updateCity(req.params.id, req.body);
+        SuccessResponse.data = city;
+
+        return res
+            .status(StatusCodes.OK)
+            .json({ SuccessResponse });
+    } catch (error) {
+        console.log("controller error => ",error);
+        
+        ErrorRespose.error =  error.explanation || error.message;;
+
+        return res
+            .status(error.StatusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+            .json({ ErrorRespose });
+    }
+}
+
 module.exports = {
     createCity,
-    deleteCity
+    deleteCity,
+    updateCity
 }
