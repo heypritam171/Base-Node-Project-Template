@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { AirplaneController } = require("../../controllers");
-const { AirplainMiddlewares } = require('../../middlewares')
+const { AirplainMiddlewares } = require('../../middlewares');
 
 console.log("Inside airplanes routes");
 
