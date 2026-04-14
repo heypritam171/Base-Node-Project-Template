@@ -10,7 +10,6 @@ module.exports = {
         table: 'Cities',
         field: 'id'
       },
-      onUpdate: 'CASCADE',
       onDelete: 'CASCADE'
     });
   },
