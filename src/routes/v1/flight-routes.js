@@ -1,0 +1,22 @@
+const express = require('express');
+const router = express.Router();
+const { FlightController } = require('../../controllers');
+const { FlightMiddlewares } = require('../../middlewares');
+
+router.post('/',
+    FlightMiddlewares.validatecreateRequest,
+    FlightController.createFlights);
+
+router.get('/:id',
+    FlightController.getFlight);
+
+router.get('/'
+    , FlightController.getFlights);
+
+router.delete('/id',
+    FlightController.deleteFlight);
+
+router.patch('/:id', FlightController.updtateFlight)
+
+
+module.exports = router;

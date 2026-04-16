@@ -1,0 +1,80 @@
+const { StatusCodes } = require('http-status-codes');
+const { FlightRepositories } = require('../repositories');
+const AppError = require('../utils/errors/app-errors');
+
+const flightRepositories = new FlightRepositories();
+
+async function createFlights(data) {
+    try {
+        const flight = await flightRepositories.create(data);
+        return flight;
+    } catch (error) {
+        console.log("ACTUAL DB ERROR =>", error);
+        if (error.name == 'SequelizeValidationError') {
+            let explanation = [];
+            error.errors.forEach((err) => {
+                explanation.push(err.message);
+            });
+
+            throw new AppError(explanation, StatusCodes.BAD_REQUEST)
+        }
+        throw new AppError("Cannot fetch data of the flight", StatusCodes.INTERNAL_SERVER_ERROR)
+    }
+}
+
+
+async function getFlights() {
+    try {
+        const flight = await flightRepositories.getAll();
+        return flight;
+    } catch (error) {
+        throw new AppError("Cannot fetch data of the flight", StatusCodes.INTERNAL_SERVER_ERROR)
+    }
+}
+
+async function getFlight(id) {
+    try {
+        const flight = await flightRepositories.get(id);
+        return flight
+    } catch (error) {
+        if (error.StatusCode == StatusCodes.NOT_FOUND) {
+            throw new AppError("The flight you requested is not present", StatusCodes.BAD_REQUEST);
+        }
+        throw new AppError("Cannot fetch data of the flight", StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+async function updateFlight(id, data) {
+    try {
+        const flight = await flightRepositories.update(id, data);
+        return flight;
+    } catch (error) {
+        if (error.StatusCode == StatusCodes.NOT_FOUND) {
+            throw new AppError("The flight you requested is not present", error.StatusCode);
+
+        }
+        throw new AppError("Cannot fetch data of the flight", StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+async function destroyFlight (id){
+
+try {
+    const flight = await flightRepositories.destroy(id);
+    return flight;
+} catch (error) {
+    if(error.StatusCode == StatusCodes.NOT_FOUND){
+         throw new AppError("The flight you requested is not present", error.StatusCode);
+    }
+     throw new AppError("Cannot fetch data of the flight", StatusCodes.INTERNAL_SERVER_ERROR);
+}
+
+}
+
+module.exports = {
+    createFlights,
+    getFlights,
+    getFlight,
+    updateFlight,
+    destroyFlight
+}
