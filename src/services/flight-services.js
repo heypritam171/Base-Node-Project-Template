@@ -2,6 +2,7 @@ const { StatusCodes } = require('http-status-codes');
 const { FlightRepositories } = require('../repositories');
 const AppError = require('../utils/errors/app-errors');
 const { compareTime } = require('../utils/helpers/datetime-helpers');
+const { Op } = require('sequelize');
 
 
 const flightRepositories = new FlightRepositories();
@@ -34,15 +35,6 @@ async function createFlights(data) {
     }
 }
 
-
-async function getFlights() {
-    try {
-        const flight = await flightRepositories.getAll();
-        return flight;
-    } catch (error) {
-        throw new AppError("Cannot fetch data of the flight", StatusCodes.INTERNAL_SERVER_ERROR)
-    }
-}
 
 async function getFlight(id) {
     try {
@@ -83,10 +75,41 @@ async function destroyFlight(id) {
 
 }
 
+
+async function getAllFlights(query) {
+    let customFilter = {};
+    //trip = MUM-DEL
+    if (query.trips) {
+       const [departureAirportId, arrivalAirportId] = query.trips.split("-");
+        customFilter.departureAirportId = departureAirportId;
+        customFilter.arrivalAirportId = arrivalAirportId;
+        // TODO: add a check that they are not same 
+
+    }
+
+    if(query.price){
+       const [minPrice, maxPrice] = query.price.split("-");
+
+        customFilter.price = {
+            [Op.between]: [minPrice, ((maxPrice == undefined) ? 20000: maxPrice)]
+        }
+    }
+
+    try {
+        const flights = await flightRepositories.getAllFlights(customFilter);
+        return flights;
+    } catch (error) {
+        console.log(error);
+        
+       throw new AppError("Cannot fetch data of all the flights", StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+
+}
+
 module.exports = {
     createFlights,
-    getFlights,
     getFlight,
     updateFlight,
-    destroyFlight
+    destroyFlight,
+    getAllFlights
 }

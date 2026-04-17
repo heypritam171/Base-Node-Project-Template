@@ -11,7 +11,7 @@ router.get('/:id',
     FlightController.getFlight);
 
 router.get('/'
-    , FlightController.getFlights);
+    , FlightController.getAllFlights);
 
 router.delete('/:id',
     FlightController.deleteFlight);
