@@ -1,15 +1,27 @@
 const { StatusCodes } = require('http-status-codes');
 const { FlightRepositories } = require('../repositories');
 const AppError = require('../utils/errors/app-errors');
+const { compareTime } = require('../utils/helpers/datetime-helpers');
+
 
 const flightRepositories = new FlightRepositories();
 
 async function createFlights(data) {
     try {
+
+        let timecompare = await compareTime(data.arrivalTime, data.departurTime);
+        if (!timecompare) {
+            throw new AppError("Arrival time should be greater than departureTime", StatusCodes.BAD_REQUEST);
+        }
         const flight = await flightRepositories.create(data);
         return flight;
     } catch (error) {
-        console.log("ACTUAL DB ERROR =>", error);
+
+        if (error.name == 'AppError') {
+
+            throw error;
+        }
+
         if (error.name == 'SequelizeValidationError') {
             let explanation = [];
             error.errors.forEach((err) => {
@@ -57,17 +69,17 @@ async function updateFlight(id, data) {
     }
 }
 
-async function destroyFlight (id){
+async function destroyFlight(id) {
 
-try {
-    const flight = await flightRepositories.destroy(id);
-    return flight;
-} catch (error) {
-    if(error.StatusCode == StatusCodes.NOT_FOUND){
-         throw new AppError("The flight you requested is not present", error.StatusCode);
+    try {
+        const flight = await flightRepositories.destroy(id);
+        return flight;
+    } catch (error) {
+        if (error.StatusCode == StatusCodes.NOT_FOUND) {
+            throw new AppError("The flight you requested is not present", error.StatusCode);
+        }
+        throw new AppError("Cannot fetch data of the flight", StatusCodes.INTERNAL_SERVER_ERROR);
     }
-     throw new AppError("Cannot fetch data of the flight", StatusCodes.INTERNAL_SERVER_ERROR);
-}
 
 }
 

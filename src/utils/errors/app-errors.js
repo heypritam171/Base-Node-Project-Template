@@ -3,6 +3,7 @@ class AppError extends Error {
         super(message);
         this.StatusCode = StatusCode;
         this.explanation = message;
+        this.name = "AppError";
     }
 }
 

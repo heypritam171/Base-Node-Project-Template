@@ -13,7 +13,7 @@ router.get('/:id',
 router.get('/'
     , FlightController.getFlights);
 
-router.delete('/id',
+router.delete('/:id',
     FlightController.deleteFlight);
 
 router.patch('/:id', FlightController.updtateFlight)

@@ -5,7 +5,6 @@ const { log } = require('winston');
 
 
 async function createFlights(req, res) {
-    console.log("BODY =>", req.body);
 
     try {
         const flight = await FlightService.createFlights({
@@ -18,18 +17,19 @@ async function createFlights(req, res) {
             price: req.body.price,
             totalSeats: req.body.totalSeats
         });
+
         SuccessResponse.data = flight;
+
         return res
             .status(StatusCodes.OK)
             .json({ SuccessResponse });
     } catch (error) {
-        console.log(error);
         
         ErrorRespose.error = error;
 
         return res
-            .status(error.StatusCode || 500)
-            .json({ ErrorRespose })
+            .status(error.StatusCode)
+            .json({ ErrorRespose });
     }
 
 }
@@ -88,21 +88,21 @@ async function updtateFlight(req, res) {
     }
 }
 
-async function deleteFlight(req, res){
+async function deleteFlight(req, res) {
     try {
         const flight = await FlightService.destroyFlight(req.params.id);
 
         SuccessResponse.data = flight;
 
         return res
-        .status(StatusCodes.OK)
-        .json({ SuccessResponse });
+            .status(StatusCodes.OK)
+            .json({ SuccessResponse });
     } catch (error) {
         ErrorRespose.error = error;
 
         return res
-        .status(error.StatusCode)
-        .json({ ErrorRespose });
+            .status(error.StatusCode)
+            .json({ ErrorRespose });
     }
 }
 
