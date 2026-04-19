@@ -24,7 +24,8 @@ async function createFlights(req, res) {
             .status(StatusCodes.OK)
             .json({ SuccessResponse });
     } catch (error) {
-
+     console.log("controller error => ",error);
+     
         ErrorRespose.error = error;
 
         return res
